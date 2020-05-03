@@ -13,8 +13,7 @@
 
 export default {
   name:'Hamburger',
-  methods:{
-  }
+
 }
 </script>
 

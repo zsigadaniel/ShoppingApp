@@ -1,6 +1,10 @@
 <template>
   <div class="cart-container" :class="{'reveal-cart':cartShow}">
         <div class="cart">
+                <div class="total" v-if="total!='0$'">
+                  <p>Total:{{total}}</p>
+                  <button>Place Order</button>
+                 </div>
           <!-- Loops through the cart array and creates the cart containing the products that have been added by the user-->
             <div class="cart-items" :key="car.id" v-for="(car, index) in cart">
                 <img :src=car[0] alt="">
@@ -15,12 +19,8 @@
                     <button :id="index" @click="remover">Remove</button>
                 </div>
            </div>
-          
         </div>
-            <div class="total" v-if="total!='0$'">
-                  <p>Total:{{total}}</p>
-                  <button>Place Order</button>
-              </div>
+           
   </div>
 </template>
 
@@ -176,6 +176,7 @@ created(){
   max-height:100%;
   transition: 0.4s ease-in-out;
 }
+
    .total{
       display: flex;
       flex-direction: column;
@@ -185,12 +186,17 @@ created(){
       font-size: 20px;
       margin-top: 10px;
       padding-bottom: 10px;
+      position: absolute;
+      top: -10px;
+      z-index: 99;
+      background: #2c3e50;
+      width: 94vw;
     }
 .cart{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-gap: 5px;
-  width: 100%;
+overflow: auto;
+ width: 100%;
+ max-height:70vh;
+ 
     .cart-items{
     display: flex;
     justify-content: flex-start;
@@ -201,6 +207,8 @@ created(){
     margin-top: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #f1c40f;
+    position: relative;
+    top: 55px;
       img{
       width: 25%;
       height: auto;
@@ -219,6 +227,9 @@ created(){
     }
 }
 @include resize{
+  .total{
+         width: 583px;
+  }
   .cart{
     width: 600px;
   }
