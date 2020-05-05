@@ -5,7 +5,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { dom } from '@fortawesome/fontawesome-svg-core'
 export const bus = new Vue();
-export const train = new Vue();
+
 
 
 dom.watch()

@@ -20,7 +20,7 @@ export default {
   methods:{
     query(e){
       if (e.key != 'Enter') return //Makes sure the keypress was enter
-      bus.$emit('query', this.search); //Emits what the user searched so it can be used in the Header component
+      bus.$emit('query', this.search.toLowerCase()); //Emits what the user searched so it can be used in the Header component
       this.search ='';//Empties the search query
     }
   }

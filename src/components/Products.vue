@@ -14,7 +14,7 @@
                   <h4>{{images2[catIndex]['Price'][index]}}</h4>
                   <h4>{{stock[index]}}</h4>
                   <!-- Ads the buttons that permit the user to add products to the cart -->
-                 <ToCart/>
+                  <button :id="index" @click="changer">To Cart</button>
               </div>
           </div>
     </div>
@@ -24,17 +24,13 @@
 
 <script>
 import {bus} from '../main'
-import ToCart from './ToCart'
+
 
 
 export default {
   name:'Products',
-  components:{
-    ToCart,
-  },
    data(){
     return{
-      test:5,
       added:'',
       remId:'',
       stock:[],
@@ -126,15 +122,35 @@ export default {
         }
      this.stock=stock;//Transfers the stock holding array to the data array for update in the DOM.
       },
-
+    changer(e){
+    let productId=e.target.id
+//Creates an array containing a product based on what the user added to cart and gets sent to be added to the cart in the Cart component
+     if (this.images2[this.catIndex]['Stock'][productId]==0 || this.images2[this.catIndex]['Stock'][productId]<0){
+       return
+     }else {
+      this.images2[this.catIndex]['Stock'][productId]--;
+     }
+       this.cartItems.push(this.images2[this.catIndex][`${this.cat}`][productId]);
+       this.cartItems.push(this.images2[this.catIndex]['Name'][productId]);
+       this.cartItems.push(this.images2[this.catIndex]['Desc'][productId]);
+       this.cartItems.push(this.images2[this.catIndex]['Price'][productId]);
+       this.cartItems.push(1);
+      bus.$emit('cartItems', this.cartItems) //Emits the product data
+       this.cartItems=[];//Empties the array so it works properly otherwise it's going to have duplicates
+       this.stockHolder();
+    },
   },
     created(){
    this.images2 =JSON.parse(JSON.stringify(this.images));
-    let counter = -1;
     bus.$emit('prodEmit', this.images2);//Emits the main array to header so the category names can be extracted and used
      bus.$on('passName', nam=>{
       this.cat=nam //Sets the category selected by the user in the category menu
       this.textFetcher();
+     });
+      bus.$on('query', qu=>{
+  
+       this.cat=qu //Sets the category queried by the user in the category menu
+       this.stockHolder();
      });
      bus.$on('catIndex', ind=>{
        this.catIndex= ind //Sets the category index 
@@ -145,9 +161,7 @@ export default {
       this.pageNames = [];
       this.stockHolder();
      });
-     bus.$on('query', qu=>{
-       this.cat=qu //Sets the category queried by the user in the category menu
-     });
+    
      this.textFetcher();//Makes the function run on startup
            bus.$on('qtty_add',qtty_add=>{
         let counter =-1;
@@ -179,23 +193,6 @@ export default {
          })
        })
      });
-
-     bus.$on('prod-numb', prodNumb=>{//Creates an array containing a product based on what the user added to cart and gets sent to be added to the cart in the Cart component
-     if (this.images2[this.catIndex]['Stock'][prodNumb]==0 || this.images2[this.catIndex]['Stock'][prodNumb]<0){
-       return
-     }else {
-      this.images2[this.catIndex]['Stock'][prodNumb]--;
-     }
-       this.cartItems.push(this.images2[this.catIndex][`${this.cat}`][prodNumb]);
-       this.cartItems.push(this.images2[this.catIndex]['Name'][prodNumb]);
-       this.cartItems.push(this.images2[this.catIndex]['Desc'][prodNumb]);
-       this.cartItems.push(this.images2[this.catIndex]['Price'][prodNumb]);
-       this.cartItems.push(counter);
-       this.cartItems.push(1);
-      bus.$emit('cartItems', this.cartItems) //Emits the product data
-       this.cartItems=[];//Empties the array so it works properly otherwise it's going to have duplicates
-       this.stockHolder();
-    });
   } 
 }
 </script>
@@ -215,6 +212,20 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+    button{
+    border:none;
+    padding: 5px;
+    color: #2c3e50;
+    background:#f1c40f;
+    font-weight: bold;
+    width: 90px;
+    transition: 0.3s ease-in-out;
+  }
+  button:hover{
+    background: #2c3e50;
+    color: #f1c40f;
+    transition: 0.3s ease-in-out;
+  }
   // flex-direction: column;
   margin-left: 5px;
   margin-right: 5px;
