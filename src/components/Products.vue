@@ -6,15 +6,15 @@
           <div class="products" :key="img.id" v-for="(img, index) in images2[catIndex][`${cat}`]" >
             <!-- Binded images that resulted from the loop -->
               <img :src=img alt="">
-              <!-- The index is placed here as an id in order to simplyfi a function found in the ToCart component -->
+              <!-- The index is placed here as an id in order to help the data manipulation later on -->
               <div :id="index" class="products-text">
-                <!-- catIndex is dictated by the number emited by the Header component in order to set where the user is operating based on what category he selected or searched the index below has the role to loop through each atribute of the products that are displayed to give each product its own name description and price -->
+                <!-- catIndex is dictated by the number emited by the Header component in order to set where the user is operating based on what category he selected or searched. The index below has the role to loop through each atribute of the products that are displayed to give each product its own name, description and price -->
                   <h4>{{images2[catIndex]['Name'][index]}}</h4>
                   <p>{{images2[catIndex]['Desc'][index]}}</p>
                   <h4>{{images2[catIndex]['Price'][index]}}</h4>
                   <h4>{{stock[index]}}</h4>
                   <!-- Ads the buttons that permit the user to add products to the cart -->
-                  <button :id="index" @click="changer">To Cart</button>
+                  <button :id="index" @click="changer">Add to cart</button>
               </div>
           </div>
     </div>
@@ -23,17 +23,16 @@
 
 
 <script>
+//Helps to pass data through child elements
 import {bus} from '../main'
-
-
 
 export default {
   name:'Products',
    data(){
     return{
-      added:'',
-      remId:'',
-      stock:[],
+      added:'',//Quantity added by user in the Cart element when pressing the update button
+      remId:'',//Used on the 'remId' event to identify the position of the stock in the stock array belonging to the main data array called images.
+      stock:[],//Empty array used to display the text representative of what is the curent stock of the displayed products
       cat:'', //Category selected by user
       catIndex:'',//Index of the category selected
       dataName:'',//Contains random names from a API fetch below
@@ -45,7 +44,7 @@ export default {
           {
             clothes:['https://cdn-images.farfetch-contents.com/ami-paris-carrot-fit-jeans_14240703_20959980_1000.jpg?c=2','https://de9luwq5d40h2.cloudfront.net/catalog/product/zoom_image/69_41435100029.jpg','https://contents.mediadecathlon.com/p1484240/k$ab565f3675dbdd7e3c486175e2c16583/men-s-trekking-shirt-travel100-warm-burgundy.jpg?&f=800x800','https://cdn11.bigcommerce.com/s-v9ta8cea70/images/stencil/1280x1280/products/1701/3960/BK-1602A__96034.1554043700.jpg?c=2'
             ],
-            Name:[],
+            Name:[],//Both empty arrays are filed by a data handler below
             Desc:[],
             Price:[10.5+'$', 5+'$', 15+'$',14+'$'],
             Stock:[100, 155, 23, 33]
@@ -123,17 +122,22 @@ export default {
      this.stock=stock;//Transfers the stock holding array to the data array for update in the DOM.
       },
     changer(e){
-    let productId=e.target.id
+    let productId=e.target.id//Checks the id of the button to relate it to the product that the user ads to the cart
 //Creates an array containing a product based on what the user added to cart and gets sent to be added to the cart in the Cart component
-     if (this.images2[this.catIndex]['Stock'][productId]==0 || this.images2[this.catIndex]['Stock'][productId]<0){
+     if (this.images2[this.catIndex]['Stock'][productId]<=0){//If the stock of the product has hit 0 prevents the user from adding more through  the Add to cart option 
        return
      }else {
-      this.images2[this.catIndex]['Stock'][productId]--;
+      this.images2[this.catIndex]['Stock'][productId]--;//If there is stock this decreases it every time the user presses Add to cart
      }
+       //Product image
        this.cartItems.push(this.images2[this.catIndex][`${this.cat}`][productId]);
-       this.cartItems.push(this.images2[this.catIndex]['Name'][productId]);
+      //Product name
+       this.cartItems.push(this.images2[this.catIndex]['Name'][productId]);  
+       //Product description   
        this.cartItems.push(this.images2[this.catIndex]['Desc'][productId]);
+       //Product price
        this.cartItems.push(this.images2[this.catIndex]['Price'][productId]);
+       //Used to be able to show how many items are in the cart
        this.cartItems.push(1);
       bus.$emit('cartItems', this.cartItems) //Emits the product data
        this.cartItems=[];//Empties the array so it works properly otherwise it's going to have duplicates
@@ -141,44 +145,40 @@ export default {
     },
   },
     created(){
-   this.images2 =JSON.parse(JSON.stringify(this.images));
-    bus.$emit('prodEmit', this.images2);//Emits the main array to header so the category names can be extracted and used
+   this.images2 =JSON.parse(JSON.stringify(this.images));//Clone of main array to be used for stock updates and to not alter the original
+    bus.$emit('prodEmit', this.images2);//Emits the clone array to header so the category names can be extracted and used
      bus.$on('passName', nam=>{
       this.cat=nam //Sets the category selected by the user in the category menu
-      this.textFetcher();
      });
-      bus.$on('query', qu=>{
-  
+      bus.$on('query', qu=>{//Case query by user
        this.cat=qu //Sets the category queried by the user in the category menu
-       this.stockHolder();
+       this.stockHolder();//Called to display the stock text for the products
      });
-     bus.$on('catIndex', ind=>{
+     bus.$on('catIndex', ind=>{//Case category selected by user from the hamburger menu
        this.catIndex= ind //Sets the category index 
-        for (let i=0; i<this.images2[this.catIndex]['Name'].length;i++){
-        this.pageNames.push(this.images2[this.catIndex]['Name'][i]);
-      }
-      bus.$emit('nameList', this.pageNames);
-      this.pageNames = [];
       this.stockHolder();
      });
     
      this.textFetcher();//Makes the function run on startup
+
+     //Handles the user input quantity that can be modified for each product in the cart
            bus.$on('qtty_add',qtty_add=>{
-        let counter =-1;
+        let counter =-1;//Used for positioning in the images2 array(clone of the main array)
         this.images2.map(arr=>{
-          counter++;
+          counter++;//Increments untill match
           arr.Name.forEach(nam=>{
-            if(qtty_add[1]==nam){
-              let id = arr.Name.indexOf(qtty_add[1]);
-              let added = parseInt(qtty_add[0]);
-              this.images2[counter]['Stock'][id]=this.images[counter]['Stock'][id]
-           this.images2[counter]['Stock'][id]=this.images2[counter]['Stock'][id]-added;
+            if(qtty_add[1]==nam){//If match
+              let id = arr.Name.indexOf(qtty_add[1]);//Sets the position of the stock based on the product that is being updated quantity wise 
+              let added = parseInt(qtty_add[0]);//Quantity added by user
+              this.images2[counter]['Stock'][id]=this.images[counter]['Stock'][id]//Resets to original stock value in case there's a copy or multiple copies of the product added in the cart by the Add to cart button
+           this.images2[counter]['Stock'][id]=this.images2[counter]['Stock'][id]-added; //Decreases the new quantity from the reset stock
              this.stockHolder();
             }
           })
         })
 
       });
+      //When the user interacts with the stock by removing the an item from the cart "remId trigers to send the stock position and updates it to its original quantity"
      bus.$on('remId', id=>{
        let counter =-1;
        this.images2.map(arr=>{
@@ -198,6 +198,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin resize{
+  @media screen and (min-width:600px){
+    @content
+  }
+}
 #products-cont{
   display: flex;
   justify-content: center;
@@ -236,6 +241,24 @@ export default {
     width: 25%;
     height: auto;
     margin-right: 5px;
+  }
+
+  @supports (-ms-ime-align:auto) {
+      img {
+          width: 13vw;
+      }
+  }
+  @include resize{
+     @supports (-ms-ime-align:auto) {
+      img {
+          width: 80px;
+      }
+  }
+  }
+  @supports (-moz-appearance:none) {
+      img {
+        width: 500px;
+      }
   }
  }
 } 

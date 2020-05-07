@@ -213,10 +213,22 @@ created(){
     border-bottom: 1px solid #f1c40f;
 
       img{
-      width: 25%;
+      width: 20%;
       height: auto;
       margin-right: 5px;
       }
+ @supports (-ms-ime-align:auto) {
+      img {
+         min-width: 100px;
+        height: max-content;
+      }
+  }
+      @supports (-moz-appearance:none) {
+      img {
+        min-width: 100px;
+        height: max-content;
+      }
+  }
     }
     .cart-text{
       display: flex;
