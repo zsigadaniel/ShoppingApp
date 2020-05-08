@@ -148,7 +148,9 @@ export default {
    this.images2 =JSON.parse(JSON.stringify(this.images));//Clone of main array to be used for stock updates and to not alter the original
     bus.$emit('prodEmit', this.images2);//Emits the clone array to header so the category names can be extracted and used
      bus.$on('passName', nam=>{
-      this.cat=nam //Sets the category selected by the user in the category menu
+      this.cat=nam[0] //Sets the category selected by the user in the category menu
+      this.catIndex= nam[1]
+      this.stockHolder();
      });
       bus.$on('query', qu=>{//Case query by user
        this.cat=qu //Sets the category queried by the user in the category menu
@@ -156,7 +158,6 @@ export default {
      });
      bus.$on('catIndex', ind=>{//Case category selected by user from the hamburger menu
        this.catIndex= ind //Sets the category index 
-      this.stockHolder();
      });
     
      this.textFetcher();//Makes the function run on startup

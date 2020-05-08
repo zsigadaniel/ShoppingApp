@@ -54,8 +54,7 @@ methods:{
   id_passer(e){
    let passName =e.target.id; 
      this.catIndex = this.product_name.indexOf(passName); //Detects the index of category name for further use
-    bus.$emit('passName', passName);//Passes the category id (name of category for further use)
-    bus.$emit('catIndex', this.catIndex);//Passes index of the name for further use
+    bus.$emit('passName', [passName, this.catIndex]);//Passes the category id (name of category for further use) and passes index of the name for further use
   }
 },
 created(){
@@ -70,7 +69,6 @@ created(){
   })
   bus.$on('query', qu=>{ //Catches the query that the user made by using the search feature to be used in order to reset the category index
   this.catIndex = this.product_name.indexOf(qu);
-  console.log(this.catIndex)
   bus.$emit('catIndex', this.catIndex);//Emits new category index (to simply put it this resets the category index by the user when they search and id_passer resets the category index when the user uses the category menu)
   })
 }
