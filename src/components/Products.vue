@@ -50,7 +50,7 @@ export default {
             Stock:[100, 155, 23, 33]
           },
           {
-            laptops:['https://www.shoplenovo.co.za/assets/products/5910-8lenovo-laptop-yoga-c940-hero-14.png','https://media.4rgos.it/i/Argos/9164291_R_Z001A?w=750&h=440&qlt=70','https://images.idgesg.net/images/article/2019/07/aspire5slim-100806682-large.jpg','https://c1.neweggimages.com/ProductImage/34-235-011-V21.jpg'
+            laptops:['https://s12emagst.akamaized.net/products/28630/28629587/images/res_7cd24eeb1f76750d3bb9088004bf31a3_450x450_e3jg.jpg','https://media.4rgos.it/i/Argos/9164291_R_Z001A?w=750&h=440&qlt=70','https://images.idgesg.net/images/article/2019/07/aspire5slim-100806682-large.jpg','https://c1.neweggimages.com/ProductImage/34-235-011-V21.jpg'
             ],
             Name:[],
             Desc:[],
