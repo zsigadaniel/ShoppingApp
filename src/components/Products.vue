@@ -1,9 +1,11 @@
 <template>
 <!-- Hides DOM data if cat (category variable is empty) -->
-<div id="products-cont" v-if="cat!=''" > 
+<div>
+  <h2 v-if="notValid">{{notValid}}</h2>
+<div id="products-cont" v-if="verifier" > 
     <div class="products-grid">
       <!-- Loops through images array to create the products that will be displayed in the DOM. The 'cat' variable is dictated by the 'passName' data emited by the Header component-->
-          <div class="products" :key="img.id" v-for="(img, index) in images2[catIndex][`${cat}`]" >
+          <div class="products" :key="img.id" v-for="(img, index) in images2[catIndex][cat]" >
             <!-- Binded images that resulted from the loop -->
               <img :src=img alt="">
               <!-- The index is placed here as an id in order to help the data manipulation later on -->
@@ -19,6 +21,7 @@
           </div>
     </div>
 </div>
+</div>
 </template>
 
 
@@ -30,6 +33,8 @@ export default {
   name:'Products',
    data(){
     return{
+      verifier:false,
+      notValid:'',
       added:'',//Quantity added by user in the Cart element when pressing the update button
       remId:'',//Used on the 'remId' event to identify the position of the stock in the stock array belonging to the main data array called images.
       stock:[],//Empty array used to display the text representative of what is the curent stock of the displayed products
@@ -38,7 +43,6 @@ export default {
       dataName:'',//Contains random names from a API fetch below
       dataDesc:'',//Contains random description from a API fetch below
       cartItems:[],//Contains the intems that will be added to the cart
-      pageNames:[],//Contains the names of the products listed on the page currently
       //Main array that contains the products
       images:[
           {
@@ -83,7 +87,6 @@ export default {
           }
       ],
       images2:[],
-      test2:0,
     }
   },
   methods:{
@@ -105,10 +108,11 @@ export default {
     //Responsible for updating the stocks
       stockHolder(){
         //Stock message holding array
+        if(this.verifier==false)return;
       let stock =[];
        let stock_Array=this.images2[this.catIndex]['Stock'];
       //Loops through the product containing array "images" to locate the "Stock" position and check the quanitity based on that it will update the DOM with the coresponding message
-       for (let i = 0; i<this.images2[this.catIndex][`${this.cat}`].length;i++){
+       for (let i = 0; i<this.images2[this.catIndex][this.cat].length;i++){
          if (stock_Array[i]>15){
             stock[i]='In stock'
             }else if(stock_Array[i]<=0){
@@ -151,13 +155,28 @@ export default {
       this.cat=nam[0] //Sets the category selected by the user in the category menu
       this.catIndex= nam[1]
       this.stockHolder();
+      this.verifier=true;
+      this.notValid='';
      });
       bus.$on('query', qu=>{//Case query by user
-       this.cat=qu //Sets the category queried by the user in the category menu
-       this.stockHolder();//Called to display the stock text for the products
+      let counter=0;
+        this.images2.forEach(nam=>{
+          if (qu!=Object.keys(nam)[0]){
+            counter++;
+          if (counter==this.images2.length){
+             this.verifier=false;
+          this.notValid='This is a Shopping App Demo, please try searching the following products: "Bikes, Clothes, Laptops, Deodorant or Tools"';
+            } return;
+          }
+          this.cat=qu //Sets the category queried by the user in the category menu
+          this.stockHolder();//Called to display the stock text for the products
+          this.verifier=true;
+          this.notValid='';
+        });
      });
-     bus.$on('catIndex', ind=>{//Case category selected by user from the hamburger menu
+     bus.$on('catIndex', ind=>{
        this.catIndex= ind //Sets the category index 
+      if (this.catIndex>-1)this.verifier=true;
      });
     
      this.textFetcher();//Makes the function run on startup
@@ -188,8 +207,9 @@ export default {
            if (id[0] == nam){
            this.remId = arr.Name.indexOf(id[0])
             this.added=parseInt(id[1])
+           if (this.catIndex>-1)this.verifier=true;
            this.images2[counter]['Stock'][this.remId] = this.images[counter]['Stock'][this.remId];
-            this.stockHolder();
+           this.stockHolder();
            }
          })
        })
@@ -203,6 +223,11 @@ export default {
   @media screen and (min-width:600px){
     @content
   }
+}
+h2{
+  text-align:center;
+  font-size:15px;
+  color: #2c3e50;
 }
 #products-cont{
   display: flex;
