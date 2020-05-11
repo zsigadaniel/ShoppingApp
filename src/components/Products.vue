@@ -153,9 +153,9 @@ export default {
     bus.$emit('prodEmit', this.images2);//Emits the clone array to header so the category names can be extracted and used
      bus.$on('passName', nam=>{
       this.cat=nam[0] //Sets the category selected by the user in the category menu
+      this.verifier=true;
       this.catIndex= nam[1]
       this.stockHolder();
-      this.verifier=true;
       this.notValid='';
      });
       bus.$on('query', qu=>{//Case query by user
