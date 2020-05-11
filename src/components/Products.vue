@@ -91,7 +91,7 @@ export default {
   },
   methods:{
     textFetcher(){
-      fetch('https://jsonplaceholder.typicode.com/comments?_limit=20')
+      fetch('https://cors-anywhere.herokuapp.com/https://jsonplaceholder.typicode.com/comments?_limit=20')
       .then(res=>{
         return res.json();
       }).then(this.setResults); //Data fetch to use as names and description
@@ -176,7 +176,7 @@ export default {
      });
      bus.$on('catIndex', ind=>{
        this.catIndex= ind //Sets the category index 
-      if (this.catIndex>-1)this.verifier=true;
+      if (this.catIndex>=0)this.verifier=true;
      });
     
      this.textFetcher();//Makes the function run on startup
@@ -207,7 +207,7 @@ export default {
            if (id[0] == nam){
            this.remId = arr.Name.indexOf(id[0])
             this.added=parseInt(id[1])
-           if (this.catIndex>-1)this.verifier=true;
+           if (this.catIndex>=0)this.verifier=true;
            this.images2[counter]['Stock'][this.remId] = this.images[counter]['Stock'][this.remId];
            this.stockHolder();
            }
