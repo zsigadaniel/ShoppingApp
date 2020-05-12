@@ -118,6 +118,7 @@ created(){
   }
   .container-categ{
     position: absolute;
+    z-index: 99;
     top: 70px;
     width: 100%;
     display: flex;
