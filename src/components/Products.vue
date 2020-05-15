@@ -7,19 +7,24 @@
       <!-- Loops through images array to create the products that will be displayed in the DOM. The 'cat' variable is dictated by the 'passName' data emited by the Header component-->
           <div class="products" :key="img.id" v-for="(img, index) in images2[catIndex][cat]" >
             <!-- Binded images that resulted from the loop -->
-              <img :src=img alt="">
+            <div class="img-text">
+               <img :src=img alt="">
+               <div class="text">
+               <h4>{{images2[catIndex]['Name'][index]}}</h4>
+               <p>{{images2[catIndex]['Desc'][index]}}</p>
+                <h4>{{stock[index]}}</h4>
+               </div>
+            </div>
               <!-- The index is placed here as an id in order to help the data manipulation later on -->
-              <div :id="index" class="products-text">
+              <div :id="index" class="price-stock-add">
                 <!-- catIndex is dictated by the number emited by the Header component in order to set where the user is operating based on what category he selected or searched. The index below has the role to loop through each atribute of the products that are displayed to give each product its own name, description and price -->
-                  <h4>{{images2[catIndex]['Name'][index]}}</h4>
-                  <p>{{images2[catIndex]['Desc'][index]}}</p>
-                  <h4>{{images2[catIndex]['Price'][index]}}</h4>
-                  <h4>{{stock[index]}}</h4>
+                  <div class="add-cart">
+                      <button :id="index" @click="changer">Add to cart</button>
+                  </div>
+                      <h4>${{images2[catIndex]['Price'][index]}}</h4>
+                    
                   <!-- Ads the buttons that permit the user to add products to the cart -->
               </div>
-                <div class="add-cart">
-                  <button :id="index" @click="changer">Add to cart</button>
-                </div>
           </div>
     </div>
 </div>
@@ -48,43 +53,38 @@ export default {
       //Main array that contains the products
       images:[
           {
-            clothes:['https://cdn-images.farfetch-contents.com/ami-paris-carrot-fit-jeans_14240703_20959980_1000.jpg?c=2','https://de9luwq5d40h2.cloudfront.net/catalog/product/zoom_image/69_41435100029.jpg','https://contents.mediadecathlon.com/p1484240/k$ab565f3675dbdd7e3c486175e2c16583/men-s-trekking-shirt-travel100-warm-burgundy.jpg?&f=800x800','https://cdn11.bigcommerce.com/s-v9ta8cea70/images/stencil/1280x1280/products/1701/3960/BK-1602A__96034.1554043700.jpg?c=2'
-            ],
+            clothes:[require('../assets/jeans.png'),require('../assets/tshirt.png'),require('../assets/shirt.png'),require('../assets/skirt.png')],
             Name:['Jeans','T-Shirt', 'Shirt', 'Skirt'],//Both empty arrays are filed by a data handler below
-            Desc:['A pair of blue jeans that increase charisma by 20', 'A T-shirt that adds 10 points of armor', 'Shirt that makes the wearer move 30% faster at night','Grants user ability to fly for 10 minutes'],
-            Price:[10.5+'$', 5+'$', 15+'$',14+'$'],
+            Desc:['Lorem ipsum dolor sit amet, consectetur adipiscing elit..', 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Velit esse cillum dolore eu fugiat nulla pariatur.','Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia'],
+            Price:[10.5, 5, 15,14],
             Stock:[100, 155, 23, 33]
           },
           {
-            laptops:['https://s12emagst.akamaized.net/products/28630/28629587/images/res_7cd24eeb1f76750d3bb9088004bf31a3_450x450_e3jg.jpg','https://media.4rgos.it/i/Argos/9164291_R_Z001A?w=750&h=440&qlt=70','https://images.idgesg.net/images/article/2019/07/aspire5slim-100806682-large.jpg','https://c1.neweggimages.com/ProductImage/34-235-011-V21.jpg'
-            ],
-            Name:['ROG gaming laptop', 'Netflix laptop','Buget laptop', 'ROG gaming laptop mark II'],
-            Desc:['Assassin`s Creed Odyssey at 60 fps (sometimes 49)','For Netflix and chill (heard The Witcher series is pretty good)','Sorry but this is all you can afford','Minecraft with Ray tracing and 2k texture pack at 30fps...#stableFrameRate'],
-            Price:[2000+'$', 400+'$', 195.5+'$',3000+'$'],
+            laptops:[require('../assets/assusrog.png'),require('../assets/hp.png'),require('../assets/dell.png'),require('../assets/predator.png')],
+            Name:['Assus ROG Gaming Laptop', 'HP Laptop','Dell Laptop', 'Raptor Gaming Laptop'],
+            Desc:['Sed ut perspiciatis unde omnis iste natus error sit voluptatem.','Quasi architecto beatae vitae dicta sunt explicabo.','Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.','Ut enim ad minima veniam, quis nostrum exercitationem.'],
+            Price:[2000, 400, 195.5, 3000],
             Stock:[19, 2, 3, 15]
           },
           {
-            tools:['https://www.kstools.com/media/image/76/fe/6b/FOT_GES_ALG_917-0797-GB_SALL_AING_V15c91d4e3dd32e_600x600@2x.jpg','https://5.imimg.com/data5/BA/SG/MY-2771418/hand-tools-500x500.png','https://itslondon.s3.amazonaws.com/p/xl/OXP4PHTPACK.jpg','https://images-na.ssl-images-amazon.com/images/I/51UDxZiACqL._AC_SY400_.jpg'
-            ],
-            Name:['Tool box ALG_917-0797-GB', 'Pliers','Tool bundle','Mini tool box ALG_917-0797-GB'],
-            Desc:['For doing work even if you don`t have work to do','Intended for working people not to be used for interogation','Starter kit, go on little one','For doing work but only when you have to'],
-            Price:[300+'$', 15.5+'$', 13+'$',100+'$'],
+            tools:[require('../assets/toolskit.png'),require('../assets/toolskit2.png'),require('../assets/tools4.png'),require('../assets/toolskit3.png')],
+            Name:['Tool box ALG_917-0797-GB', 'Proffesional tools kit','Tools bundle','Mini tool box ALG_917-0797-GB'],
+            Desc:['Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quamt.','At vero eos et accusamus et iusto odio dignissimos ducimus qui.','Quas molestias excepturi sint occaecati cupiditate non provident.','Itaque earum rerum hic tenetur a sapiente delectus, ut aut.'],
+            Price:[300,450.5,13,100],
             Stock:[3, 13, 23, 33]
           },
           {
-            bikes:['https://cdn.shopify.com/s/files/1/2081/1519/products/1600x1067_Cortello_Silver_PROFILE_1_1.jpg?v=1573931871','https://cdn.shopify.com/s/files/1/2081/1519/products/1600x1067_US_B_Mint_ANGLE-X2.jpg?v=1573931859','https://cdn.shopify.com/s/files/1/2081/1519/products/1600x1067_DCFC-X2.jpg?v=1545814341','https://images-na.ssl-images-amazon.com/images/I/815OuNAxtwL._SX466_.jpg'
-            ],
+            bikes:[require('../assets/bike1.png'),require('../assets/bike2.png'),require('../assets/bike3.png'),require('../assets/bike4.png')],
             Name:['Cortello Silver','Mint ANGLE-X2','DCFC-X2','SX466'],
-            Desc:['Enjoy the wind with this decent priced bike','In case you like the color','Great bike, and great if you fear the number 4','If you can`t afford a monster truck get this'],
-            Price:[300+'$', 250+'$', 399.99+'$',550+'$'],
+            Desc:['Fuga eos qui dolor rerum inventore corporis exercitationem.','Vel quae voluptas qui exercitationem voluptatibus unde.','Nihil ut voluptates blanditiis autem odio dicta rerum quisquam.','Iste ut laborum aliquid velit facere itaque quo ut soluta dicta voluptate.'],
+            Price:[300, 250, 399.99,550],
             Stock:[11, 4, 7, 23]
           },
           {
-            deodorant:['https://images.freshop.com/00079400379979/885da018da1ac07f3657036390148f35_large.png','https://cdn.fragrancenet.com/images/photos/900x900/275504.jpg','https://images.freshop.com/00079400551405/72ea1b88f804a07c817fa736c45398c7_large.png','https://images-static.nykaa.com/media/catalog/product/tr:h-800,w-800,cm-pad_resize/8/9/8901450007286.jpg'
-            ],
-            Name:['AXE','Calvin Klein','AXE KILO','DENVER'],
-            Desc:['You a question? body spray','Great dude, likes spray apparently','Same question only green','Classy looking spray, great color choice'],
-            Price:[10+'$', 5+'$', 4.66+'$',20+'$'],
+            deodorant:[require('../assets/axe2.png'),require('../assets/lynx.png'),require('../assets/axe.png'),require('../assets/dove.png')],
+            Name:['AXE Green','Lynx','AXE','Fougère'],
+            Desc:['Consequatur necessitatibus totam sed sit dolorum recusandae quae odio','Veritatis voluptates necessitatibus maiores corrupti neque et','Sdoloribus est illo sed minima aperiam ut dignissimos.','Cqui harum consequatur fugiat et eligendi perferendis.'],
+            Price:[10,32,4.66,20],
             Stock:[20, 14, 0, 19]
           }
       ],
@@ -92,21 +92,6 @@ export default {
     }
   },
   methods:{
-    // textFetcher(){
-    //   fetch('https://cors-anywhere.herokuapp.com/https://jsonplaceholder.typicode.com/comments?_limit=20')
-    //   .then(res=>{
-    //     return res.json();
-    //   }).then(this.setResults); //Data fetch to use as names and description
-    // },
-    //       setResults(results){ //Data handler
-    //       this.dataName = results.map(dat=>dat.name); //Sets the random names
-    //       this.dataDesc = results.map(dade=>dade.body); //Sets the random descriptions
-    //       for (let i=0; i < this.images2.length; i++){//Loops and silces the name and description array of 20 items to distribute them in each of their respective arrays
-    //       this.images2[i]['Desc'] = this.dataDesc.slice(i*4, (i+1)*4);
-    //       this.images2[i]['Name'] = this.dataName.slice(i*4, (i+1)*4);
-    //       }
-    //   },
-
     //Responsible for updating the stocks
       stockHolder(){
         //Stock message holding array
@@ -167,7 +152,7 @@ export default {
             counter++;
           if (counter==this.images2.length){
              this.verifier=false;
-          this.notValid='This is a Shopping App Demo, please try searching the following products: "Bikes, Clothes, Laptops, Deodorant or Tools"';
+          this.notValid='This is a Shopping App Demo, please try searching the following cateogries: "Bikes, Clothes, Laptops, Deodorant or Tools"';
             } return;
           }
           this.cat=qu //Sets the category queried by the user in the category menu
@@ -234,37 +219,59 @@ h2{
 #products-cont{
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100%;
   color: #2c3e50;
 }
 .products-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit,minmax(220px, 1fr));
   grid-gap: 5px;
-  width: 100%;
+  width: 95%;
 .products{
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  .products-text{
-    padding-bottom: 20px;
-  }
-     button{
-    border:none;
-    padding: 5px;
-    color: #2c3e50;
-    background:#f1c40f;
-    font-weight: bold;
-    width: 90px;
-    transition: 0.3s ease-in-out;
+  width: 95%;
+  .img-text{
+    display: flex;
+    padding-bottom: 40px;
+    img{
+    width: auto;
+    height:60px;
+    position: relative;
+    right: 10px;
+    margin-right: 5px;
     }
-  .add-cart{
+
+    @supports (-ms-ime-align:auto) {
+      img {
+        width: auto;
+        height: 80px;
+      }
+  }
+
+    @supports (-moz-appearance:none) {
+      img {
+         width: auto;
+         height: 70px;
+      }
+    }
+  }
+  .price-stock-add{
     width: 100%;
-    height:100%;
+    height:98%;
     position: absolute;
     display: flex;
-    justify-content: flex-end;
     align-items: flex-end;
+   justify-content: flex-start;
+ h4{
+     margin-left: 10px;
+ }
+  }
+  .add-cart{
     button{
     position: relative;
     border:none;
@@ -281,35 +288,12 @@ h2{
     color: #f1c40f;
     transition: 0.3s ease-in-out;
   }
-  // flex-direction: column;
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 10px;
   padding-bottom: 5px;
   border-bottom: 1px solid #f1c40f;
-  img{
-    width: 25%;
-    height: auto;
-    margin-right: 5px;
-  }
 
-  @supports (-ms-ime-align:auto) {
-      img {
-          width: 13vw;
-      }
-  }
-  @include resize{
-     @supports (-ms-ime-align:auto) {
-      img {
-          width: 80px;
-      }
-  }
-  }
-  @supports (-moz-appearance:none) {
-      img {
-        width: 500px;
-      }
-  }
  }
 } 
 

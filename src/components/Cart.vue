@@ -2,17 +2,19 @@
   <div class="cart-container" :class="{'reveal-cart':cartShow}">
    
            <div class="cart">
-                <div class="total" v-if="total!='0$'">
+                <div class="total" v-if="total!='$0'">
                   <p>Total:{{total}}</p>
                   <button>Place Order</button>
                  </div>
           <!-- Loops through the cart array and creates the cart containing the products that have been added by the user-->
             <div class="cart-items" :key="car.id" v-for="(car, index) in cart">
+              <div class="image">
                 <img :src=car[0] alt="">
+              </div>
                 <div class="cart-text">
                     <h4>{{car[1]}}</h4>
                     <p>{{car[2]}}</p>
-                    <p v-if="!totalInputArray[index]">{{car[3]}}</p>
+                    <p v-if="!totalInputArray[index]">${{car[3]}}</p>
                     <p>{{totalInputArray[index]}}</p>
                     <p>Curent Quantity:</p>
                     <input :id="index" type="text" :placeholder=car[4] v-model="tex[index]">
@@ -36,7 +38,7 @@ export default {
     settings:{
       maxScrollBarLength:60
     },
-  tex:[],
+  tex:[],//User input
   name:'Cart',
   numbKeep:[],//Contains the actual numbers in order to have a total of all products in cart
   total:'',//Displays the total 
@@ -52,6 +54,7 @@ methods:{
   quantity_added(e){
     // If input is not a number return
  if (isNaN(this.tex[e.target.id]))return;
+ if (this.tex[e.target.id] % 1 !=0) return;
  //If input is undefined return 
  if(this.tex[e.target.id]==undefined)return;
  //Changes the quantity of the product inside the cart based on its position by using its id with what the user inputs
@@ -63,7 +66,7 @@ methods:{
     this.tex=[];
 //Makes so the product price updates based on the quantity added by the user
   let totalInput = parseFloat(this.cart[e.target.id][3]) * this.cart[e.target.id][4];
-  this.totalInputArray[e.target.id] = totalInput  + '$';
+  this.totalInputArray[e.target.id] = '$'+ totalInput ;
   //Calls the function responsible for displaying the total sum in $ for all products added in the cart
   this.totalizator();
   },
@@ -79,10 +82,11 @@ methods:{
      //Removes the prices from the array helping to keep them displayed in order for each product
      this.totalInputArray.splice(e.target.id,1);
      //Regenerates a new total based on removed products
-     this.total = this.numbKeep.reduce((a,b)=>a+b,0) + '$';
+     this.total = '$'+ this.numbKeep.reduce((a,b)=>a+b,0);
      //Removes quantity of objects based on the product id selected by the user
      this.repeter.splice(e.target.id,1);
      //Emits a the new quantity of the cart so it updates based on what is removed
+     this.tex=[];
    bus.$emit('cartQtty', this.repeter.reduce((a,b)=>a+b,0)+this.cart.length);
    //Makes the cart close if the quantity of products inside is less then zero
     if(this.repeter.reduce((a,b)=>a+b,0)+this.cart.length>0)return;
@@ -99,10 +103,10 @@ methods:{
     bus.$emit('cartQtty',this.repeter.reduce((a,b)=>a+b,0)+this.cart.length);
   //Makes so the product price updates based on the quantity added by the user by clicking on "Add to cart"
     let totalInput = parseFloat(this.cart[x][3]) * this.cart[x][4];
-    //Creates an array all the prices * quantity added
+    //Creates an array of all the prices * quantity added
     this.numbKeep[x] = totalInput;
     }
-   this.total = this.numbKeep.reduce((a,b)=>a+b,0) + '$';//The total creator
+   this.total = '$'+ this.numbKeep.reduce((a,b)=>a+b,0);//The total creator
   },
 },
 created(){
@@ -116,7 +120,7 @@ created(){
           this.cart[x][4]++;
     //Makes so the product price updates based on the quantity added by the user
             let totalInput = parseFloat(this.cart[x][3]) * this.cart[x][4];
-            this.totalInputArray[x] = totalInput  + '$';
+            this.totalInputArray[x] = '$'+ totalInput ;
              //Calls the function responsible for displaying the total sum in $ for all products added in the cart
              this.repeter[x]=parseFloat(this.cart[x][4]-1);
           this.totalizator();
@@ -154,6 +158,7 @@ created(){
   justify-content: center;
   align-items: center;
   position: absolute;
+  z-index: 99;
   top: 70px;
   max-height:0;
   overflow: hidden;
@@ -198,9 +203,9 @@ created(){
       width: 100vw;
     }
 .cart{
-   overflow: auto;
-  width: 100%;
-  max-height:70vh;
+    overflow: auto;
+    width: 100%;
+    max-height:70vh;
     .cart-items{
     display: flex;
     justify-content: flex-start;
@@ -211,22 +216,28 @@ created(){
     margin-top: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #f1c40f;
-
-      img{
-      width: 20%;
+    .image{
+      min-width: 100px;
+      max-width: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+     img{
+      width: 80%;
       height: auto;
       margin-right: 5px;
       }
+    }
  @supports (-ms-ime-align:auto) {
       img {
-         min-width: 100px;
-        height: max-content;
+         min-width: 120px;
+          height: max-content;
       }
   }
       @supports (-moz-appearance:none) {
       img {
-        min-width: 100px;
-        height: max-content;
+        min-width: 120px;
+        min-height: max-content;
       }
   }
     }
