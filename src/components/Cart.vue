@@ -230,8 +230,8 @@ created(){
     }
  @supports (-ms-ime-align:auto) {
       img {
-         min-width: 120px;
-          height: max-content;
+         min-width: 100px;
+         height: max-content;
       }
   }
       @supports (-moz-appearance:none) {
