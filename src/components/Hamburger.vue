@@ -1,9 +1,8 @@
 <template>
   <div id="hamburger">
     <div class="lines">
-      
     </div>
-     <!-- Emits an event when the user presses the hamburger menu that trigers the function that reveals the category menu -->
+     <!-- Emits an event when the user interacts with the hamburger menu that trigers the function that reveals the category menu -->
     <div id="lines-clicker" @click="$emit('reveal-cat')"></div> 
   </div>
 </template>

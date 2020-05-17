@@ -58,7 +58,7 @@ methods:{
   }
 },
 created(){
-  bus.$on('cartQtty', qtty=>this.cartQtty=qtty);
+  bus.$on('cartQtty', qtty=>this.cartQtty=qtty);//updates cart quantity
   bus.$on('prodEmit', categNam=>{ //Catches the array data sent from Products to extract the names and push it into the product_name array to be used in id_passer and in the v-for from the template in order to display the names extracted from the passed array
    this.categNam = categNam;
    let x;
@@ -69,7 +69,7 @@ created(){
   })
   bus.$on('query', qu=>{ //Catches the query that the user made by using the search feature to be used in order to reset the category index
   this.catIndex = this.product_name.indexOf(qu);
-  bus.$emit('catIndex', this.catIndex);//Emits new category index (to simply put it this resets the category index by the user when they search and id_passer resets the category index when the user uses the category menu)
+  bus.$emit('catIndex', this.catIndex);//Emits new category index (to simply put it this resets the category index by the user when they search and id_passer resets the category index when the user interacts with the category menu)
   })
 }
 }

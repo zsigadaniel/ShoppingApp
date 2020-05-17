@@ -6,25 +6,28 @@
     <div class="products-grid">
       <!-- Loops through images array to create the products that will be displayed in the DOM. The 'cat' variable is dictated by the 'passName' data emited by the Header component-->
           <div class="products" :key="img.id" v-for="(img, index) in images2[catIndex][cat]" >
+            <!-- catIndex is dictated by the number emited by the Header component in order to set where the user is operating based on what category he selected or searched. The index below has the role to loop through each atribute of the products that are displayed to give each product its own name, description and price -->
             <!-- Binded images that resulted from the loop -->
             <div class="img-text">
                <img :src=img alt="">
+               <!-- Text containing the products information -->
                <div class="text">
+                 <!-- Name -->
                <h4>{{images2[catIndex]['Name'][index]}}</h4>
+                  <!-- Description -->
                <p>{{images2[catIndex]['Desc'][index]}}</p>
+                  <!-- Stock -->
                 <h4>{{stock[index]}}</h4>
                </div>
             </div>
               <!-- The index is placed here as an id in order to help the data manipulation later on -->
-              <div :id="index" class="price-stock-add">
-                <!-- catIndex is dictated by the number emited by the Header component in order to set where the user is operating based on what category he selected or searched. The index below has the role to loop through each atribute of the products that are displayed to give each product its own name, description and price -->
+              <!-- Contains the add to cart button and the price of each product -->
+              <div :id="index" class="price-add">
                   <div class="add-cart">
                       <button :id="index" @click="changer">Add to cart</button>
                   </div>
                       <h4>${{images2[catIndex]['Price'][index]}}</h4>
-                    
-                  <!-- Ads the buttons that permit the user to add products to the cart -->
-              </div>
+                </div>
           </div>
     </div>
 </div>
@@ -40,7 +43,7 @@ export default {
   name:'Products',
    data(){
     return{
-      verifier:false,
+      verifier:false,//Only displays the products if a valid input has been detected
       notValid:'',
       added:'',//Quantity added by user in the Cart element when pressing the update button
       remId:'',//Used on the 'remId' event to identify the position of the stock in the stock array belonging to the main data array called images.
@@ -51,10 +54,12 @@ export default {
       dataDesc:'',//Contains random description from a API fetch below
       cartItems:[],//Contains the intems that will be added to the cart
       //Main array that contains the products
+
+      //Went down this path for lack of a server from where I could have used a fetch API
       images:[
           {
             clothes:[require('../assets/jeans.png'),require('../assets/tshirt.png'),require('../assets/shirt.png'),require('../assets/skirt.png')],
-            Name:['Jeans','T-Shirt', 'Shirt', 'Skirt'],//Both empty arrays are filed by a data handler below
+            Name:['Jeans','T-Shirt', 'Shirt', 'Skirt'],
             Desc:['Lorem ipsum dolor sit amet, consectetur adipiscing elit..', 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Velit esse cillum dolore eu fugiat nulla pariatur.','Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia'],
             Price:[10.5, 5, 15,14],
             Stock:[100, 155, 23, 33]
@@ -88,17 +93,17 @@ export default {
             Stock:[20, 14, 0, 19]
           }
       ],
-      images2:[],
+      images2:[],//Copy of main array
     }
   },
   methods:{
     //Responsible for updating the stocks
       stockHolder(){
-        //Stock message holding array
         if(this.verifier==false)return;
+      //Stock message holding array
       let stock =[];
        let stock_Array=this.images2[this.catIndex]['Stock'];
-      //Loops through the product containing array "images" to locate the "Stock" position and check the quanitity based on that it will update the DOM with the coresponding message
+      //Loops through the product array "images2" to locate the "Stock" position and check the quanitity based on that it will update the DOM with the coresponding message
        for (let i = 0; i<this.images2[this.catIndex][this.cat].length;i++){
          if (stock_Array[i]>15){
             stock[i]='In stock'
@@ -110,15 +115,15 @@ export default {
               stock[i]='In stock'
           }
         }
-     this.stock=stock;//Transfers the stock holding array to the data array for update in the DOM.
+     this.stock=stock;//Transfers the stock holding array to the data array so it updates in the DOM.
       },
+    //Creates an array containing a product based on what the user added to cart and gets sent to be added to the cart in the Cart component
     changer(e){
-    let productId=e.target.id//Checks the id of the button to relate it to the product that the user ads to the cart
-//Creates an array containing a product based on what the user added to cart and gets sent to be added to the cart in the Cart component
+    let productId=e.target.id;
      if (this.images2[this.catIndex]['Stock'][productId]<=0){//If the stock of the product has hit 0 prevents the user from adding more through  the Add to cart option 
        return
      }else {
-      this.images2[this.catIndex]['Stock'][productId]--;//If there is stock this decreases it every time the user presses Add to cart
+      this.images2[this.catIndex]['Stock'][productId]--;//If there is stock this decreases it every time the user adds to cart
      }
        //Product image
        this.cartItems.push(this.images2[this.catIndex][`${this.cat}`][productId]);
@@ -128,7 +133,7 @@ export default {
        this.cartItems.push(this.images2[this.catIndex]['Desc'][productId]);
        //Product price
        this.cartItems.push(this.images2[this.catIndex]['Price'][productId]);
-       //Used to be able to show how many items are in the cart
+       //Added for later used to keep track of how many of the same items are added in the cart
        this.cartItems.push(1);
       bus.$emit('cartItems', this.cartItems) //Emits the product data
        this.cartItems=[];//Empties the array so it works properly otherwise it's going to have duplicates
@@ -138,26 +143,27 @@ export default {
     created(){
    this.images2 =JSON.parse(JSON.stringify(this.images));//Clone of main array to be used for stock updates and to not alter the original
     bus.$emit('prodEmit', this.images2);//Emits the clone array to header so the category names can be extracted and used
-     bus.$on('passName', nam=>{
+     bus.$on('passName', nam=>{//nam contains a 2 element array with category id (name of category) and index of the name emited by Header, id_passer
       this.cat=nam[0] //Sets the category selected by the user in the category menu
       this.verifier=true;
-      this.catIndex= nam[1]
+      this.catIndex= nam[1]//Sets the category index 
       this.stockHolder();
-      this.notValid='';
+      this.notValid='';//Removes not valid message
      });
-      bus.$on('query', qu=>{//Case query by user
+      bus.$on('query', qu=>{//Case `search` by user
       let counter=0;
+      //Checks category array based on user input and if no match is returned displays the  notValid message
         this.images2.forEach(nam=>{
           if (qu!=Object.keys(nam)[0]){
             counter++;
           if (counter==this.images2.length){
-             this.verifier=false;
+           this.verifier=false;
           this.notValid='This is a Shopping App Demo, please try searching the following cateogries: "Bikes, Clothes, Laptops, Deodorant or Tools"';
             } return;
           }
           this.cat=qu //Sets the category queried by the user in the category menu
           this.stockHolder();//Called to display the stock text for the products
-          this.verifier=true;
+          this.verifier=true;//If there is a match the products get displayed
           this.notValid='';
         });
      });
@@ -166,8 +172,6 @@ export default {
       if (this.catIndex>=0)this.verifier=true;
      });
     
-    
-
      //Handles the user input quantity that can be modified for each product in the cart
            bus.$on('qtty_add',qtty_add=>{
         let counter =-1;//Used for positioning in the images2 array(clone of the main array)
@@ -206,11 +210,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@mixin resize{
-  @media screen and (min-width:600px){
-    @content
-  }
-}
+// Style for the not valid message
 h2{
   text-align:center;
   font-size:15px;
@@ -260,7 +260,7 @@ h2{
       }
     }
   }
-  .price-stock-add{
+  .price-add{
     width: 100%;
     height:98%;
     position: absolute;
